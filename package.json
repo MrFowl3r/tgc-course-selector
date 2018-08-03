@@ -1,0 +1,17 @@
+{
+  "name": "tgc-course-selector",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Jason Fowler",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^2.0.6"
+  },
+  "dependencies": {
+    "puppeteer": "^1.6.2"
+  }
+}
