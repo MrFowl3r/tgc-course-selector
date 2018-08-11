@@ -46,13 +46,18 @@
     });
 
     var getRandomCourse = function() {
+      document.getElementById('courseName').innerText = "Loading course...";
+      var courseImg = "./images/loading.jpg";
+      for (let i = 1; i < 4; i++) {
+        document.getElementById('img' + i)['src'] = courseImg;
+      }
+
       var num = Math.floor((Math.random() * courseData.length) + 1) - 1;
       var courseInfo = courseData[num];
-      document.getElementById('courseName').innerText = courseInfo.courseName;
-      getCourseDetails(courseInfo.link);
+      getCourseDetails(courseInfo.link, courseInfo.courseName);
     }
 
-    var getCourseDetails = function(url) {
+    var getCourseDetails = function(url, courseName) {
       $.getJSON('http://allorigins.me/get?url=' + encodeURIComponent(url) + '&callback=?', function(data){
         var count = 1;
         $(data.contents).find('#slider > img').each(function(index, element) {
@@ -62,6 +67,7 @@
             count = count + 1;
           }
         })
+        document.getElementById('courseName').innerText = courseName;
       });
     }
   </script>
