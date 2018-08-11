@@ -1,14 +1,68 @@
 <!DOCTYPE html>
-  <html>
-    <head>
-      <meta charset="UTF-8">
-      <title>The Golf Club Course Selector</title>
-    </head>
-    <body>
-      <button onclick="saveFile()">Click me</button> 
-      We are using node <script>document.write(process.versions.node)</script>,
-      Chrome <script>document.write(process.versions.chrome)</script>,
-      and Electron <script>document.write(process.versions.electron)</script>.
-    </body>
-    <script src="./main.js"></script>
-  </html>
+<html>
+  <meta charset="utf-8"/>
+  <head>
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="./nivoslider/jquery.nivo.slider.js"></script>
+    <link rel="stylesheet" href="./nivoslider/themes/default.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="./nivoslider/nivo-slider.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="./css/main.css" type="text/css" media="screen" />
+    <script>if (window.module) module = window.module;</script>
+  </head>
+  <body>
+    <button onclick="getRandomCourse()">Give me a course!</button>
+    <div id="courseName">Loading courses...</div>
+    <div id="wrapper" class="imgWrapper">
+      <div class="slider-wrapper theme-default">
+        <div id="slider">
+          <img id="img1" src="./images/loading.jpg">
+          <img id="img2" src="./images/loading.jpg">
+          <img id="img3" src="./images/loading.jpg">
+        </div>
+      </div>
+    </div>
+    <div id="courseDetails"></div>
+    <div id="courses"></div>
+  </body>
+  <script>
+    var courseData = [];
+
+    $(document).ready(function(){
+      $.getJSON('http://allorigins.me/get?url=' + encodeURIComponent('https://tgctours.com/Course/TGC2Listings?Grid-sort=DateCreated-desc&Grid-page=1&Grid-pageSize=50') + '&callback=?', function(data){
+        var rows = $(data.contents).find('#Grid table tbody tr > td:nth-child(3) > a').each(function(index, element) {
+          var link = element['href'];
+          var index = link.indexOf("Course");
+          link = link.substring(index);
+          link = "https://tgctours.com/" + link;
+          courseData.push({ courseName: element.textContent, link: link});
+        });
+        getRandomCourse();
+        //var strData = JSON.stringify(courseData);
+        //document.getElementById('courses').innerHTML = strData;
+      });
+
+      $('#slider').nivoSlider();
+    });
+
+    var getRandomCourse = function() {
+      var num = Math.floor((Math.random() * courseData.length) + 1) - 1;
+      var courseInfo = courseData[num];
+      document.getElementById('courseName').innerText = courseInfo.courseName;
+      getCourseDetails(courseInfo.link);
+    }
+
+    var getCourseDetails = function(url) {
+      $.getJSON('http://allorigins.me/get?url=' + encodeURIComponent(url) + '&callback=?', function(data){
+        var count = 1;
+        $(data.contents).find('#slider > img').each(function(index, element) {
+          if(count < 4) {
+            var courseImg = element['src'];
+            document.getElementById('img' + count)['src'] = courseImg;
+            count = count + 1;
+          }
+        })
+      });
+    }
+  </script>
+</html> 

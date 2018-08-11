@@ -1,46 +1,8 @@
 const {app, BrowserWindow} = require('electron')
-const fs = require('fs');
-const path = require('path');
-const puppeteer = require('puppeteer');
   
   // Keep a global reference of the window object, if you don't, the window will
   // be closed automatically when the JavaScript object is garbage collected.
-  let win;
-  let courseData = [];
-
-  let scrape = async () => {
-    const browser = await puppeteer.launch({headless: false});
-    const page = await browser.newPage();
-    await page.goto('https://tgctours.com/Course/TGC2Listings?Grid-sort=DateCreated-desc&Grid-page=1&Grid-pageSize=50');
-    await page.waitFor(1000);
-
-    // Scrape
-    const result = await page.evaluate(() => {
-        let data = [];
-        let tableBody = document.querySelector('#Grid > table > tbody');
-        let rows = tableBody.querySelectorAll('tr');
-        for(var aRow of rows) {
-          let courseName = aRow.childNodes[2].innerText;
-          let link = aRow.childNodes[2].firstChild['href'];
-          data.push({ courseName, link });
-        }
-        return data;
-    });
-  
-    browser.close();
-    return result;
-  
-  };
-
-  function init() {
-
-    scrape().then((value) => {
-      courseData = value;
-      console.log(value); // Success!
-    });
-
-    createWindow();
-  }
+  let win
   
   function createWindow () {
     // Create the browser window.
@@ -48,7 +10,7 @@ const puppeteer = require('puppeteer');
   
     // and load the index.html of the app.
     win.loadFile('index.html')
-
+  
     // Emitted when the window is closed.
     win.on('closed', () => {
       // Dereference the window object, usually you would store windows
@@ -61,7 +23,7 @@ const puppeteer = require('puppeteer');
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
-  app.on('ready', init)
+  app.on('ready', createWindow)
   
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {
@@ -79,11 +41,3 @@ const puppeteer = require('puppeteer');
       createWindow()
     }
   })
-  
-  // In this file you can include the rest of your app's specific main process
-  // code. You can also put them in separate files and require them here.
-  function saveFile() {
-    //let filePath = app.getAppPath();
-    //let fileName = path.join(filePath, 'data.txt');
-    fs.writeFileSync('data.txt', 'test data');
-  }
