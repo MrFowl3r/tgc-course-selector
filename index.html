@@ -13,12 +13,12 @@
   <body>
     <button onclick="getRandomCourse()">Give me a course!</button>
     <div id="courseName">Loading courses...</div>
-    <div id="wrapper" class="imgWrapper">
+    <div id="wrapper">
       <div class="slider-wrapper theme-default">
-        <div id="slider">
-          <img id="img1" src="./images/loading.jpg">
-          <img id="img2" src="./images/loading.jpg">
-          <img id="img3" src="./images/loading.jpg">
+        <div id="slider" class="imgWrapper">
+          <img id="img1" src="./images/loading.jpg" width="750">
+          <img id="img2" src="./images/loading.jpg" width="750">
+          <img id="img3" src="./images/loading.jpg" width="750">
         </div>
       </div>
     </div>
@@ -30,16 +30,17 @@
 
     $(document).ready(function(){
       $.getJSON('http://allorigins.me/get?url=' + encodeURIComponent('https://tgctours.com/Course/TGC2Listings?Grid-sort=DateCreated-desc&Grid-page=1&Grid-pageSize=50') + '&callback=?', function(data){
-        var rows = $(data.contents).find('#Grid table tbody tr > td:nth-child(3) > a').each(function(index, element) {
-          var link = element['href'];
+        var rows = $(data.contents).find('#Grid table tbody tr').each(function(index, element) {
+          var courseElement = element.childNodes[2].firstChild;
+          var designer = element.childNodes[5].textContent;
+          var link = courseElement['href'];
           var index = link.indexOf("Course");
           link = link.substring(index);
           link = "https://tgctours.com/" + link;
-          courseData.push({ courseName: element.textContent, link: link});
+          courseData.push({ courseName: courseElement.textContent, designer: designer, link: link});
         });
+        console.log(courseData);
         getRandomCourse();
-        //var strData = JSON.stringify(courseData);
-        //document.getElementById('courses').innerHTML = strData;
       });
 
       $('#slider').nivoSlider();
@@ -54,10 +55,10 @@
 
       var num = Math.floor((Math.random() * courseData.length) + 1) - 1;
       var courseInfo = courseData[num];
-      getCourseDetails(courseInfo.link, courseInfo.courseName);
+      getCourseDetails(courseInfo.link, courseInfo.courseName, courseInfo.designer);
     }
 
-    var getCourseDetails = function(url, courseName) {
+    var getCourseDetails = function(url, courseName, designer) {
       $.getJSON('http://allorigins.me/get?url=' + encodeURIComponent(url) + '&callback=?', function(data){
         var count = 1;
         $(data.contents).find('#slider > img').each(function(index, element) {
@@ -67,7 +68,7 @@
             count = count + 1;
           }
         })
-        document.getElementById('courseName').innerText = courseName;
+        document.getElementById('courseName').innerHTML = '<strong>' + courseName + '</strong> by ' + designer;
       });
     }
   </script>
