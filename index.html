@@ -29,7 +29,18 @@
     var courseData = [];
 
     $(document).ready(function(){
-      $.getJSON('http://allorigins.me/get?url=' + encodeURIComponent('https://tgctours.com/Course/TGC2Listings?Grid-sort=DateCreated-desc&Grid-page=1&Grid-pageSize=50') + '&callback=?', function(data){
+      $.getJSON('./app-config.json', function(config) {
+        var url = config.baseUrl;
+        var maxCourses = config.maxCourses;
+        loadAllCourses(url, maxCourses);
+      });
+
+      $('#slider').nivoSlider();
+    });
+
+    var loadAllCourses = function(url, maxCourses) {
+      url = url + '?Grid-sort=DateCreated-desc&Grid-page=1&Grid-pageSize=' + maxCourses;
+      $.getJSON('http://allorigins.me/get?url=' + encodeURIComponent(url) + '&callback=?', function(data){
         var rows = $(data.contents).find('#Grid table tbody tr').each(function(index, element) {
           var courseElement = element.childNodes[2].firstChild;
           var designer = element.childNodes[5].textContent;
@@ -42,9 +53,7 @@
         console.log(courseData);
         getRandomCourse();
       });
-
-      $('#slider').nivoSlider();
-    });
+    }
 
     var getRandomCourse = function() {
       document.getElementById('courseName').innerText = "Loading course...";
