@@ -1,29 +1,36 @@
 <!DOCTYPE html>
-<html>
-  <meta charset="utf-8"/>
+<html lang="en">
   <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" src="./nivoslider/jquery.nivo.slider.js"></script>
     <link rel="stylesheet" href="./nivoslider/themes/default.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="./nivoslider/nivo-slider.css" type="text/css" media="screen" />
-    <link rel="stylesheet" href="./css/main.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script>if (window.module) module = window.module;</script>
   </head>
   <body>
-    <button onclick="getRandomCourse()">Give me a course!</button>
-    <div id="courseName">Loading courses...</div>
-    <div id="wrapper">
-      <div class="slider-wrapper theme-default">
-        <div id="slider" class="imgWrapper">
-          <img id="img1" src="./images/loading.jpg" width="750">
-          <img id="img2" src="./images/loading.jpg" width="750">
-          <img id="img3" src="./images/loading.jpg" width="750">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <button onclick="getRandomCourse()">Give me a course!</button>
+        </div>
+      </div>
+      <div class="row">
+        <div id="courseName" class="col-12">Loading courses...</div>
+      </div>
+      <div id="wrapper" class="row">
+        <div class="slider-wrapper theme-default col-12">
+          <div id="slider" class="imgWrapper">
+            <img id="img1" src="./images/loading.jpg" width="750">
+            <img id="img2" src="./images/loading.jpg" width="750">
+            <img id="img3" src="./images/loading.jpg" width="750">
+          </div>
         </div>
       </div>
     </div>
-    <div id="courseDetails"></div>
-    <div id="courses"></div>
   </body>
   <script>
     var courseData = [];
