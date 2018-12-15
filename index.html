@@ -36,30 +36,42 @@
     var courseData = [];
 
     $(document).ready(function(){
-      $.getJSON('./app-config.json', function(config) {
-        var url = config.baseUrl;
-        var maxCourses = config.maxCourses;
-        loadAllCourses(url, maxCourses);
-      });
+        var url = 'https://tgctours.com/Course/TGC2019Listings';
+        var maxCourses = 200;
+        getAllCourses(url, maxCourses);
 
       $('#slider').nivoSlider();
     });
 
-    var loadAllCourses = function(url, maxCourses) {
-      url = url + '?Grid-sort=DateCreated-desc&Grid-page=1&Grid-pageSize=' + maxCourses;
-      $.getJSON('http://allorigins.me/get?url=' + encodeURIComponent(url) + '&callback=?', function(data){
-        var rows = $(data.contents).find('#Grid table tbody tr').each(function(index, element) {
-          var courseElement = element.childNodes[2].firstChild;
-          var designer = element.childNodes[5].textContent;
-          var link = courseElement['href'];
-          var index = link.indexOf("Course");
-          link = link.substring(index);
-          link = "https://tgctours.com/" + link;
-          courseData.push({ courseName: courseElement.textContent, designer: designer, link: link});
-        });
-        console.log(courseData);
-        getRandomCourse();
+    var getAllCourses = function(url, maxCourses) {
+      url = url + '?Grid-sort=DateCreated-desc&Grid-page=1&Grid-pageSize=' + maxCourses + '&callback=?';
+      makeRequest(url, loadAllCourses);
+    }
+
+    var loadAllCourses = function(data) {
+      var rows = $(data).find('#Grid table tbody tr').each(function(index, element) {
+        var courseElement = element.childNodes[2].firstChild;
+        var designer = element.childNodes[5].textContent;
+        var link = courseElement['href'];
+        var index = link.indexOf("Course");
+        link = link.substring(index);
+        link = "https://tgctours.com/" + link;
+        courseData.push({ courseName: courseElement.textContent, designer: designer, link: link}); 
       });
+      console.log(courseData);
+      getRandomCourse();
+    }
+
+    var makeRequest = function(url, callback) {
+      let xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+          callback(this.responseText);          
+        }
+      }
+      xhr.open("GET", "https://cors-anywhere.herokuapp.com/" + url);
+      xhr.setRequestHeader("Accept", 'application/json');
+      xhr.send();
     }
 
     var getRandomCourse = function() {
@@ -75,9 +87,9 @@
     }
 
     var getCourseDetails = function(url, courseName, designer) {
-      $.getJSON('http://allorigins.me/get?url=' + encodeURIComponent(url) + '&callback=?', function(data){
+      makeRequest(url, function(data){
         var count = 1;
-        $(data.contents).find('#slider > img').each(function(index, element) {
+        $(data).find('#slider > img').each(function(index, element) {
           if(count < 4) {
             var courseImg = element['src'];
             document.getElementById('img' + count)['src'] = courseImg;
